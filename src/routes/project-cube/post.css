@@ -81,18 +81,6 @@
   }
 }
 
-/* Inline silhouettes — tiny SVGs the JS substitutes for `##.|###|##.` text. */
-.silh[data-silh-rendered] {
-  @apply inline-block align-middle leading-none;
-  font-size: 0;
-}
-.silh[data-silh-rendered] svg { @apply inline-block; }
-.silh:not([data-silh-rendered]) {
-  font-family: var(--font-mono);
-  @apply text-[0.9em] bg-code-bg rounded-[3px];
-  padding: 0.05em 0.3em;
-}
-
 /* The hero photograph at the top of the article. */
 .hero {
   @apply w-full max-w-[520px] block mx-auto my-4 rounded-lg;
@@ -138,10 +126,6 @@ iframe {
   @apply my-3 px-4 py-2 rounded-md bg-code-bg;
   border-left: 3px solid var(--color-accent);
 }
-
-/* Math sizing — KaTeX defaults look big against Georgia body. */
-.katex { font-size: 1.02em; }
-.katex-display { font-size: 1.04em; margin: 0.7em 0; }
 
 /* Two-figure horizontal pairs (e.g. before/after). */
 .split-figs {

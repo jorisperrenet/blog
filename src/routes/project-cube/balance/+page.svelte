@@ -1,11 +1,21 @@
 <script>
   import { base } from '$app/paths';
+  import Math from '$lib/Math.svelte';
+
+  // Heavier expressions defined here so the markup stays readable. `String.raw`
+  // keeps backslashes literal (so `\text` stays `\text`, not a tab character).
+  const tex = String.raw;
+  const COM_DEF = tex`\text{COM} = \tfrac{1}{3}\bigl[(1.5, 1.5, 1.5) + (2.5, 1.5, 1.5) + (1.5, 2.5, 1.5)\bigr] = (11/6,\ 11/6,\ 3/2).`;
+  const LP_SYSTEM = tex`\begin{aligned}
+\text{force balance:}\quad &\sum_{c \in \mathcal{C}(b)} \sigma_{b,c} \sum_{k=1}^{4} F_{c,k} = m_b\, g \\
+\text{torque about }y\text{:}\quad &\sum_{c \in \mathcal{C}(b)} \sigma_{b,c} \sum_{k=1}^{4} F_{c,k}\, x_{c,k} = m_b\, g\, x_b^{\text{COM}} \\
+\text{torque about }x\text{:}\quad &\sum_{c \in \mathcal{C}(b)} \sigma_{b,c} \sum_{k=1}^{4} F_{c,k}\, y_{c,k} = m_b\, g\, y_b^{\text{COM}}
+\end{aligned}`;
+  const TORQUE_QUARTER = tex`\tfrac{mg}{4}`;
+  const FORCE_BALANCE = tex`4 \cdot \tfrac{mg}{4} = mg`;
 </script>
 
 <svelte:head><title>Balance — Project Cube</title></svelte:head>
-
-<!-- Section 3 — Balance: harder than it looks                       -->
-<!-- ============================================================== -->
 
 <h2>Balance: harder than it looks</h2>
 
@@ -16,19 +26,19 @@
 <p>The main thing I wanted was to establish a rule of balance. Something that can be checked by the computer. Preferably simple, under which every case of balance will fall. This page contains some examples and how the algorithm changed throughout the project.</p>
 
 <aside class="note">
-<strong>A note on coordinates.</strong> Cells are indexed by integer \((x, y, z)\) with each axis running 0 to 2. The integer is the <em>edge</em> of the cell, so cell \((1, 1, 0)\) spans \(x, y \in [1, 2]\). The full 3×3×3 grid runs from 0 to 3 on each axis.
+<strong>A note on coordinates.</strong> Cells are indexed by integer <Math expr="(x, y, z)" /> with each axis running 0 to 2. The integer is the <em>edge</em> of the cell, so cell <Math expr="(1, 1, 0)" /> spans <Math expr={tex`x, y \in [1, 2]`} />. The full 3×3×3 grid runs from 0 to 3 on each axis.
 </aside>
 
 <h3>An L on a hollow cube</h3>
 
 <figure>
   <iframe class="iframe-tower" src={`${base}/project-cube/tower_view.html?example=l_on_hollow_stable`} loading="lazy" title="L on hollow"></iframe>
-  <figcaption><a href="https://en.wikipedia.org/wiki/Center_of_mass" target="_blank" rel="noopener noreferrer">Center of mass</a> (COM) at \((11/6,\ 11/6,\ 3/2)\), inside the 1×1 support polygon (which spans \(x, y \in [1, 2]\)).</figcaption>
+  <figcaption><a href="https://en.wikipedia.org/wiki/Center_of_mass" target="_blank" rel="noopener noreferrer">Center of mass</a> (COM) at <Math expr={tex`(11/6,\ 11/6,\ 3/2)`} />, inside the 1×1 support polygon (which spans <Math expr={tex`x, y \in [1, 2]`} />).</figcaption>
 </figure>
 
-<p>The L spans three unit cells with centers at \((1.5, 1.5, 1.5)\), \((2.5, 1.5, 1.5)\), and \((1.5, 2.5, 1.5)\). With equal mass per cell, the COM is the mean of the centers:</p>
+<p>The L spans three unit cells with centers at <Math expr="(1.5, 1.5, 1.5)" />, <Math expr="(2.5, 1.5, 1.5)" />, and <Math expr="(1.5, 2.5, 1.5)" />. With equal mass per cell, the COM is the mean of the centers:</p>
 
-<p>$$\text&lbrace;COM&rbrace; = \tfrac&lbrace;1&rbrace;&lbrace;3&rbrace;\bigl[(1.5, 1.5, 1.5) + (2.5, 1.5, 1.5) + (1.5, 2.5, 1.5)\bigr] = (11/6,\ 11/6,\ 3/2).$$</p>
+<Math expr={COM_DEF} display />
 
 <p class="rule-callout"><strong>The rule:</strong> each block's center of mass (COM) has to be over the cells supporting it.</p>
 
@@ -73,7 +83,7 @@
   <iframe src={`${base}/project-cube/tower_view.html?example=l_hugging`} loading="lazy" title="L hugging vertical 1×1×2 (tips)" class="h-[260px]"></iframe>
 </figure>
 
-<p>The L's COM is at \(x_\text&lbrace;COM&rbrace; = 1/2\), \(y_\text&lbrace;COM&rbrace; = 7/6\). Since the COM is outside its support, will this block fall? Well, imagine that the blocks were made of rubber. The center of mass of the whole structure says it will stand. And yet the LP actually has it slide off. There is friction, especially when the pieces are made of rubber. So then it would be pretty logical that this tower would stand. Do we somehow need to account for friction? In the end, I chose not to do this because it would just create a lot more difficulty.</p>
+<p>The L's COM is at <Math expr={tex`x_\text{COM} = 1/2`} />, <Math expr={tex`y_\text{COM} = 7/6`} />. Since the COM is outside its support, will this block fall? Well, imagine that the blocks were made of rubber. The center of mass of the whole structure says it will stand. And yet the LP actually has it slide off. There is friction, especially when the pieces are made of rubber. So then it would be pretty logical that this tower would stand. Do we somehow need to account for friction? In the end, I chose not to do this because it would just create a lot more difficulty.</p>
 
 <p><em>"The rule remains unchanged, but now also has to account for torque, and we also said that we won't implement friction. Does this have to become a full-blown physics simulator?"</em></p>
 
@@ -112,45 +122,33 @@
       <path d="M0,0 L10,5 L0,10 z" fill="#2b7d2b"/>
     </marker>
   </defs>
-  <!-- LEFT: balanced — 1×3 block centred on a 1×1 cube -->
   <g transform="translate(20, 20)">
     <text x="125" y="0" font-size="13" font-weight="bold" fill="#2b7d2b" text-anchor="middle">balanced ✓</text>
-    <!-- top block (1×3, 3 cells of 50px each) -->
     <rect x="50" y="25" width="150" height="50" fill="#fff7e6" stroke="#222" stroke-width="2"/>
     <line x1="100" y1="25" x2="100" y2="75" stroke="#222" stroke-width="0.5" stroke-dasharray="3,2" opacity="0.4"/>
     <line x1="150" y1="25" x2="150" y2="75" stroke="#222" stroke-width="0.5" stroke-dasharray="3,2" opacity="0.4"/>
-    <!-- supporting cube under the MIDDLE cell — touches block's bottom -->
     <rect x="100" y="75" width="50" height="50" fill="#dde3ec" stroke="#222" stroke-width="1.5"/>
-    <!-- contact corners (where the two blocks meet) -->
     <circle cx="100" cy="75" r="4" fill="#d35400"/>
     <circle cx="150" cy="75" r="4" fill="#d35400"/>
-    <!-- COM at the centre of the top block -->
     <circle cx="125" cy="50" r="5" fill="#2266cc"/>
     <text x="133" y="54" font-size="11" fill="#2266cc">COM</text>
-    <!-- gravity arrow: long, from COM straight down through the cube -->
     <line x1="125" y1="50" x2="125" y2="125" stroke="#222" stroke-width="2.5" marker-end="url(#gA)"/>
     <text x="133" y="95" font-size="12" fill="#222">m·g</text>
-    <!-- two corner reactions, each half the gravity length, pushing up into the block -->
     <line x1="100" y1="75" x2="100" y2="38" stroke="#2b7d2b" stroke-width="2.5" marker-end="url(#rA)"/>
     <line x1="150" y1="75" x2="150" y2="38" stroke="#2b7d2b" stroke-width="2.5" marker-end="url(#rA)"/>
     <text x="92" y="60" font-size="12" fill="#2b7d2b" text-anchor="end">m·g/2</text>
     <text x="158" y="60" font-size="12" fill="#2b7d2b">m·g/2</text>
   </g>
-  <!-- RIGHT: tips — same block on a cube under the LEFT cell -->
   <g transform="translate(290, 20)">
     <text x="125" y="0" font-size="13" font-weight="bold" fill="#cc4444" text-anchor="middle">tips ✗</text>
-    <!-- same top block -->
     <rect x="50" y="25" width="150" height="50" fill="#fff7e6" stroke="#222" stroke-width="2"/>
     <line x1="100" y1="25" x2="100" y2="75" stroke="#222" stroke-width="0.5" stroke-dasharray="3,2" opacity="0.4"/>
     <line x1="150" y1="25" x2="150" y2="75" stroke="#222" stroke-width="0.5" stroke-dasharray="3,2" opacity="0.4"/>
-    <!-- supporting cube under the LEFT cell -->
     <rect x="50" y="75" width="50" height="50" fill="#dde3ec" stroke="#222" stroke-width="1.5"/>
     <circle cx="50" cy="75" r="4" fill="#d35400"/>
     <circle cx="100" cy="75" r="4" fill="#d35400"/>
-    <!-- COM at block centre — past cube's right edge -->
     <circle cx="125" cy="50" r="5" fill="#2266cc"/>
     <text x="133" y="54" font-size="11" fill="#2266cc">COM</text>
-    <!-- gravity from COM down through block bottom into empty space below (no cube under this column) -->
     <line x1="125" y1="53" x2="125" y2="125" stroke="#222" stroke-width="2.5" marker-end="url(#gA)"/>
     <text x="133" y="100" font-size="12" fill="#222">m·g</text>
   </g>
@@ -172,35 +170,27 @@
       <path d="M0,0 L10,5 L0,10 z" fill="#2b7d2b"/>
     </marker>
   </defs>
-  <!-- left 1×1 cube (70×70) -->
   <rect x="245" y="100" width="70" height="70" fill="#dde3ec" stroke="#222" stroke-width="1.5"/>
-  <!-- right 1×1 cube -->
   <rect x="385" y="100" width="70" height="70" fill="#dde3ec" stroke="#222" stroke-width="1.5"/>
-  <!-- 1×1×3 beam (210×70) sitting on both cubes -->
   <rect x="245" y="30" width="210" height="70" fill="#fff7e6" stroke="#222" stroke-width="2"/>
   <line x1="315" y1="30" x2="315" y2="100" stroke="#222" stroke-width="0.5" stroke-dasharray="3,2" opacity="0.4"/>
   <line x1="385" y1="30" x2="385" y2="100" stroke="#222" stroke-width="0.5" stroke-dasharray="3,2" opacity="0.4"/>
-  <!-- contact corners (each contact face has 2 visible corners in side view) -->
   <circle cx="245" cy="100" r="5" fill="#d35400"/>
   <circle cx="315" cy="100" r="5" fill="#d35400"/>
   <circle cx="385" cy="100" r="5" fill="#d35400"/>
   <circle cx="455" cy="100" r="5" fill="#d35400"/>
-  <!-- COM at beam centre (over the unsupported middle cell) -->
   <circle cx="350" cy="65" r="6" fill="#2266cc"/>
   <text x="360" y="70" font-size="14" fill="#2266cc">COM</text>
-  <!-- gravity arrow (= mg): long, from COM down through beam bottom into the gap -->
   <line x1="350" y1="71" x2="350" y2="170" stroke="#222" stroke-width="3" marker-end="url(#gC)"/>
   <text x="360" y="130" font-size="15" fill="#222">m·g</text>
-  <!-- four corner reactions, each m·g/4, pushing up into the beam -->
   <line x1="245" y1="100" x2="245" y2="75" stroke="#2b7d2b" stroke-width="3" marker-end="url(#rC)"/>
   <line x1="315" y1="100" x2="315" y2="75" stroke="#2b7d2b" stroke-width="3" marker-end="url(#rC)"/>
   <line x1="385" y1="100" x2="385" y2="75" stroke="#2b7d2b" stroke-width="3" marker-end="url(#rC)"/>
   <line x1="455" y1="100" x2="455" y2="75" stroke="#2b7d2b" stroke-width="3" marker-end="url(#rC)"/>
-  <!-- labels on the outer sides of the cubes -->
   <text x="240" y="140" font-size="14" fill="#2b7d2b" text-anchor="end">m·g/4 each</text>
   <text x="460" y="140" font-size="14" fill="#2b7d2b">m·g/4 each</text>
 </svg>
-<figcaption>Bridge, side view. Two separate 1×1 contacts, COM over the gap. Each of the four corners can push independently; one balanced solution puts \(\tfrac&lbrace;mg&rbrace;&lbrace;4&rbrace;\) at every corner. Force balance: \(4 \cdot \tfrac&lbrace;mg&rbrace;&lbrace;4&rbrace; = mg\) ✓. Torque balance: the four equal pushes are symmetric around the COM, so their torques cancel ✓.</figcaption>
+<figcaption>Bridge, side view. Two separate 1×1 contacts, COM over the gap. Each of the four corners can push independently; one balanced solution puts <Math expr={TORQUE_QUARTER} /> at every corner. Force balance: <Math expr={FORCE_BALANCE} /> ✓. Torque balance: the four equal pushes are symmetric around the COM, so their torques cancel ✓.</figcaption>
 </figure>
 
 <h4 class="mb-[0.4em]">The algorithm, written out</h4>
@@ -210,22 +200,16 @@
 <p>Notation, before the LP equations:</p>
 
 <ul>
-<li>\(\mathcal&lbrace;C&rbrace;\) — the set of all contact faces in the tower (block-on-block, and block-on-ground). \(\mathcal&lbrace;C&rbrace;(b)\) — the subset that touches block \(b\).</li>
-<li>\(F_&lbrace;c,k&rbrace; \geq 0\) — the upward push at corner \(k \in \&lbrace;1,2,3,4\&rbrace;\) of contact \(c\). Four non-negative variables per face.</li>
-<li>\((x_&lbrace;c,k&rbrace;, y_&lbrace;c,k&rbrace;)\) — the horizontal position of that corner.</li>
-<li>\(\sigma_&lbrace;b,c&rbrace;\) — sign convention: \(+1\) if block \(b\) sits above contact \(c\) (contact pushes \(b\) up), \(-1\) if \(b\) sits below (reaction presses \(b\) down).</li>
-<li>\(m_b, g, (x_b^&lbrace;\text&lbrace;COM&rbrace;&rbrace;, y_b^&lbrace;\text&lbrace;COM&rbrace;&rbrace;)\) — block \(b\)'s mass, gravity, and the horizontal coordinates of its centre of mass.</li>
+<li><Math expr={tex`\mathcal{C}`} /> — the set of all contact faces in the tower (block-on-block, and block-on-ground). <Math expr={tex`\mathcal{C}(b)`} /> — the subset that touches block <Math expr="b" />.</li>
+<li><Math expr={tex`F_{c,k} \geq 0`} /> — the upward push at corner <Math expr={tex`k \in \{1,2,3,4\}`} /> of contact <Math expr="c" />. Four non-negative variables per face.</li>
+<li><Math expr={tex`(x_{c,k}, y_{c,k})`} /> — the horizontal position of that corner.</li>
+<li><Math expr={tex`\sigma_{b,c}`} /> — sign convention: <Math expr="+1" /> if block <Math expr="b" /> sits above contact <Math expr="c" /> (contact pushes <Math expr="b" /> up), <Math expr="-1" /> if <Math expr="b" /> sits below (reaction presses <Math expr="b" /> down).</li>
+<li><Math expr={tex`m_b, g, (x_b^{\text{COM}}, y_b^{\text{COM}})`} /> — block <Math expr="b" />'s mass, gravity, and the horizontal coordinates of its centre of mass.</li>
 </ul>
 
-<p>$$
-\begin&lbrace;aligned&rbrace;
-\text&lbrace;force balance:&rbrace;\quad &\sum_&lbrace;c \in \mathcal&lbrace;C&rbrace;(b)&rbrace; \sigma_&lbrace;b,c&rbrace; \sum_&lbrace;k=1&rbrace;^&lbrace;4&rbrace; F_&lbrace;c,k&rbrace; = m_b\, g \\
-\text&lbrace;torque about &rbrace;y\text&lbrace;:&rbrace;\quad &\sum_&lbrace;c \in \mathcal&lbrace;C&rbrace;(b)&rbrace; \sigma_&lbrace;b,c&rbrace; \sum_&lbrace;k=1&rbrace;^&lbrace;4&rbrace; F_&lbrace;c,k&rbrace;\, x_&lbrace;c,k&rbrace; = m_b\, g\, x_b^&lbrace;\text&lbrace;COM&rbrace;&rbrace; \\
-\text&lbrace;torque about &rbrace;x\text&lbrace;:&rbrace;\quad &\sum_&lbrace;c \in \mathcal&lbrace;C&rbrace;(b)&rbrace; \sigma_&lbrace;b,c&rbrace; \sum_&lbrace;k=1&rbrace;^&lbrace;4&rbrace; F_&lbrace;c,k&rbrace;\, y_&lbrace;c,k&rbrace; = m_b\, g\, y_b^&lbrace;\text&lbrace;COM&rbrace;&rbrace;
-\end&lbrace;aligned&rbrace;
-$$</p>
+<Math expr={LP_SYSTEM} display />
 
-<p>No objective: it's a pure <em>feasibility</em> LP. Some \(F \geq 0\) satisfies every equation ⇒ <span class="text-[#2b7d2b]"><strong>stable</strong></span>; no such \(F\) exists ⇒ <span class="text-[#cc4444]"><strong>tips</strong></span>.</p>
+<p>No objective: it's a pure <em>feasibility</em> LP. Some <Math expr={tex`F \geq 0`} /> satisfies every equation ⇒ <span class="text-[#2b7d2b]"><strong>stable</strong></span>; no such <Math expr="F" /> exists ⇒ <span class="text-[#cc4444]"><strong>tips</strong></span>.</p>
 
 <h4 class="mb-[0.4em]">Strict vs marginal balance.</h4>
 
@@ -246,36 +230,26 @@ $$</p>
       <path d="M0,0 L10,5 L0,10 z" fill="#cc4444"/>
     </marker>
   </defs>
-  <!-- LEFT: marginal — 1×2 block sitting on a 1×1 cube; block centre over cube's right edge -->
   <g transform="translate(20, 20)">
     <text x="120" y="0" font-size="13" font-weight="bold" fill="#dba434" text-anchor="middle">δ = 0 → MARGINAL</text>
-    <!-- 1×2 block (2 cells of 50px) -->
     <rect x="70" y="25" width="100" height="50" fill="#fff7e6" stroke="#222" stroke-width="2"/>
     <line x1="120" y1="25" x2="120" y2="75" stroke="#222" stroke-width="0.5" stroke-dasharray="3,2" opacity="0.4"/>
-    <!-- 1×1 cube under the LEFT cell, touching block bottom -->
     <rect x="70" y="75" width="50" height="50" fill="#dde3ec" stroke="#222" stroke-width="1.5"/>
-    <!-- contact corners (face = top of cube) -->
     <circle cx="70" cy="75" r="4" fill="#d35400"/>
     <circle cx="120" cy="75" r="4" fill="#d35400"/>
-    <!-- COM at block centre = cube's right edge -->
     <circle cx="120" cy="50" r="5" fill="#2266cc"/>
     <text x="128" y="54" font-size="11" fill="#2266cc">COM</text>
-    <!-- gravity inside the block -->
     <line x1="115" y1="50" x2="115" y2="75" stroke="#222" stroke-width="2.5" marker-end="url(#gD)"/>
     <text x="105" y="65" font-size="12" fill="#222" text-anchor="end">m·g</text>
-    <!-- reaction: tail ON the surface, at face's right edge (= COM column) -->
     <line x1="120" y1="75" x2="120" y2="50" stroke="#dba434" stroke-width="2.5" marker-end="url(#rDok)"/>
     <text x="128" y="65" font-size="11" fill="#dba434">F on edge</text>
   </g>
-  <!-- RIGHT: strict — same blocks; LP shrinks the face by δ -->
   <g transform="translate(290, 20)">
     <text x="120" y="0" font-size="13" font-weight="bold" fill="#cc4444" text-anchor="middle">δ &gt; 0 → UNSTABLE</text>
     <rect x="70" y="25" width="100" height="50" fill="#fff7e6" stroke="#222" stroke-width="2"/>
     <line x1="120" y1="25" x2="120" y2="75" stroke="#222" stroke-width="0.5" stroke-dasharray="3,2" opacity="0.4"/>
     <rect x="70" y="75" width="50" height="50" fill="#dde3ec" stroke="#222" stroke-width="1.5"/>
-    <!-- original face boundary dashed -->
     <line x1="70" y1="75" x2="120" y2="75" stroke="#888" stroke-width="1.5" stroke-dasharray="3,3"/>
-    <!-- shrunk face solid -->
     <line x1="74" y1="75" x2="116" y2="75" stroke="#222" stroke-width="3"/>
     <circle cx="74" cy="75" r="4" fill="#d35400"/>
     <circle cx="116" cy="75" r="4" fill="#d35400"/>
@@ -283,12 +257,9 @@ $$</p>
     <text x="128" y="54" font-size="11" fill="#2266cc">COM</text>
     <line x1="115" y1="50" x2="115" y2="75" stroke="#222" stroke-width="2.5" marker-end="url(#gD)"/>
     <text x="105" y="65" font-size="12" fill="#222" text-anchor="end">m·g</text>
-    <!-- attempted reaction at COM column (x=120) — past the shrunk face's right edge (x=116) -->
     <line x1="120" y1="75" x2="120" y2="50" stroke="#cc4444" stroke-width="2.5" stroke-dasharray="4,3" marker-end="url(#rDfail)"/>
     <text x="128" y="65" font-size="11" fill="#cc4444">F outside ✗</text>
   </g>
 </svg>
 <figcaption><em>Left:</em> δ = 0. This is the case as before. If the force at the right corner is exactly the gravity from the center of mass, this will balance. <em>Right:</em> if we trimmed the face a little, then the center of mass now lies outside the contact face. So there are no possible forces that would counteract the weight.</figcaption>
 </figure>
-
-<!-- ============================================================== -->

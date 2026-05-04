@@ -1,11 +1,10 @@
 <script>
   import { base } from '$app/paths';
+  import Math from '$lib/Math.svelte';
+  import Silhouette from '$lib/Silhouette.svelte';
 </script>
 
 <svelte:head><title>The cards — Project Cube</title></svelte:head>
-
-<!-- Section 4 — The cards                                           -->
-<!-- ============================================================== -->
 
 <h2>The cards</h2>
 
@@ -20,14 +19,12 @@
 
 <p>But now we have forgotten something, namely reflections. Cards can also be mirrored (the back is the same as the front but reflected, for the player sitting next to you to build the same tower). Not that mirroring does anything to the solutions: as all pieces can be mirrored, if a figure can be built, its mirror also exists.</p>
 
-<p>So, we can combine one of <strong>eight</strong> symmetries: the four rotations and their reflections. Mathematicians call this the <a href="https://en.wikipedia.org/wiki/Dihedral_group" target="_blank" rel="noopener noreferrer">dihedral group</a> \(D_4\), the symmetry group of the square. Under that grouping, the deck has only <strong>twelve</strong> shapes, because three pairs of cards are mirror images of each other:</p>
+<p>So, we can combine one of <strong>eight</strong> symmetries: the four rotations and their reflections. Mathematicians call this the <a href="https://en.wikipedia.org/wiki/Dihedral_group" target="_blank" rel="noopener noreferrer">dihedral group</a> <Math expr="D_4" />, the symmetry group of the square. Under that grouping, the deck has only <strong>twelve</strong> shapes, because three pairs of cards are mirror images of each other:</p>
 
 <ul>
-<li>Card 1 (<span class="silh">###|##.|.#.</span>) is the mirror of card 3 (<span class="silh">##.|###|#..</span>)</li>
-<li>Card 5 (<span class="silh">#..|###|.##</span>) is the mirror of card 7 (<span class="silh">##.|##.|.##</span>)</li>
-<li>Card 9 (<span class="silh">.##|##.|.#.</span>) is the mirror of card 11 (<span class="silh">##.|.##|.#.</span>)</li>
+<li>Card 1 (<Silhouette text="###|##.|.#." />) is the mirror of card 3 (<Silhouette text="##.|###|#.." />)</li>
+<li>Card 5 (<Silhouette text="#..|###|.##" />) is the mirror of card 7 (<Silhouette text="##.|##.|.##" />)</li>
+<li>Card 9 (<Silhouette text=".##|##.|.#." />) is the mirror of card 11 (<Silhouette text="##.|.##|.#." />)</li>
 </ul>
 
-<p>Therefore, we say that the original deck has 12 distinct cards (under \(D_4\)) and not 15 distinct ones. From here on, when this post says "distinct cards," it means twelve.</p>
-
-<!-- ============================================================== -->
+<p>Therefore, we say that the original deck has 12 distinct cards (under <Math expr="D_4" />) and not 15 distinct ones. From here on, when this post says "distinct cards," it means twelve.</p>

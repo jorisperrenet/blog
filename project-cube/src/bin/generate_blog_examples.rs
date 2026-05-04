@@ -1039,9 +1039,8 @@ fn render_hardest_pairs_solver() {
     }
     manifest.push(']');
 
-    std::fs::write(format!("{}/hardpairs_manifest.js", ASSETS_DIR),
-                   format!("window.HARDPAIRS_MANIFEST = {};", manifest))
-        .expect("write hardpairs manifest (.js)");
+    std::fs::write(format!("{}/hardpairs_manifest.json", ASSETS_DIR), &manifest)
+        .expect("write hardpairs manifest (.json)");
     eprintln!("hardest-pairs solver: {} pairs", chosen.len());
 }
 
@@ -1204,9 +1203,8 @@ fn main() {
         ).unwrap();
     }
     stats.push('}');
-    std::fs::write(format!("{}/stats.js", ASSETS_DIR),
-                   format!("window.STATS = {};", stats))
-        .expect("write stats.js");
+    std::fs::write(format!("{}/stats.json", ASSETS_DIR), &stats)
+        .expect("write stats.json");
     render_extension_marginal(
         ".#.|###|###",
         "tower_extend_marg_dotcenter.html",

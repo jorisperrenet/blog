@@ -7,7 +7,7 @@
 <h1>Project Cube: well-designed or not?</h1>
 
 <p class="text-[0.95em] text-muted -mt-2 mb-5">
-  In a hurry? Skip to the <a href={`${base}/project-cube/solver`}><strong>live silhouette pair solver</strong></a> and start drawing card pairs.
+  In a hurry? Skip to the <a href={`${base}/project-cube/solver/`}><strong>live silhouette pair solver</strong></a> and start drawing card pairs.
 </p>
 
 <!-- ============================================================== -->
@@ -23,7 +23,7 @@
 
 <p>The natural question — the one that started this — is: <strong>does every pair of cards have a stable solution?</strong></p>
 
-<p>My quest to solve it started with the obvious thought: <em>well, how many possible configurations of the blocks are there?</em> I picked Rust to implement this. After about thirty minutes I was stoked — the enumeration was done. The one thing I'd left as a <code>TODO</code> was the small matter of <em>when does something balance?</em> Little did I know that this was actually the difficult part — not the enumeration, but <em>given a 3-D structure, decide whether it is stable</em>. Once I'd worked that out, the rest fell into place: an analysis of the game, an answer to whether the deck could be extended with new cards, and a <a href={`${base}/project-cube/solver`}>live solver</a> you can reference during gameplay for whichever pair you've drawn.</p>
+<p>My quest to solve it started with the obvious thought: <em>well, how many possible configurations of the blocks are there?</em> I picked Rust to implement this. After about thirty minutes I was stoked — the enumeration was done. The one thing I'd left as a <code>TODO</code> was the small matter of <em>when does something balance?</em> Little did I know that this was actually the difficult part — not the enumeration, but <em>given a 3-D structure, decide whether it is stable</em>. Once I'd worked that out, the rest fell into place: an analysis of the game, an answer to whether the deck could be extended with new cards, and a <a href={`${base}/project-cube/solver/`}>live solver</a> you can reference during gameplay for whichever pair you've drawn.</p>
 
 <div class="clear-both"></div>
 

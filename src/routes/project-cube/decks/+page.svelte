@@ -29,7 +29,7 @@
   <figcaption><strong>All-pieces-required regime</strong> (a stricter version of the rules). The same 102 silhouettes, but only 285 compatibility edges remain.</figcaption>
 </figure>
 
-<p>The <a href="solver"><strong>silhouette pair solver</strong></a> uses these graphs' edges as its lookup table — every pair you can draw on the front and side grids is one entry in the subset-allowed graph above.</p>
+<p>The <a href={`${base}/project-cube/solver`}><strong>silhouette pair solver</strong></a> uses these graphs' edges as its lookup table — every pair you can draw on the front and side grids is one entry in the subset-allowed graph above.</p>
 
 <h3>The three largest cliques (subset-allowed regime)</h3>
 

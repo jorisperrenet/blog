@@ -16,7 +16,7 @@
 <li><strong>Impossible</strong> — the configuration does not stand.</li>
 </ul>
 
-<p>Running this enumeration over all piece configurations yields 72,994 distinct (front, side) pairs that admit at least one strict tower, with about 1.6 million strict arrangements summed across all of them. If you want to play with the result, jump to the <a href="solver"><strong>silhouette pair solver</strong></a> — toggle any front/side pair and see whether it's solvable, how many arrangements work, and a 3-D rendering of one of them.</p>
+<p>Running this enumeration over all piece configurations yields 72,994 distinct (front, side) pairs that admit at least one strict tower, with about 1.6 million strict arrangements summed across all of them. If you want to play with the result, jump to the <a href={`${base}/project-cube/solver`}><strong>silhouette pair solver</strong></a> — toggle any front/side pair and see whether it's solvable, how many arrangements work, and a 3-D rendering of one of them.</p>
 
 <h3>The easiest pair</h3>
 

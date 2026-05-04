@@ -1,5 +1,6 @@
 <script>
   import { onMount } from 'svelte';
+  import { base } from '$app/paths';
 
   // The solver_db.json file is the same one the legacy solver.html uses —
   // an array of [front_mask, side_mask, strict, marginal, placements]
@@ -44,7 +45,7 @@
     };
     const b64 = btoa(JSON.stringify(towerSpec))
       .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
-    return `tower_view.html?data=${b64}`;
+    return `${base}/project-cube/tower_view.html?data=${b64}`;
   });
 
   function onClear() { frontMask = 0; sideMask = 0; }
@@ -57,7 +58,7 @@
 
   onMount(async () => {
     try {
-      const r = await fetch('assets/solver_db.json');
+      const r = await fetch(`${base}/project-cube/assets/solver_db.json`);
       if (!r.ok) throw new Error(`HTTP ${r.status}`);
       const arr = await r.json();
       const idx = new Map();

@@ -1,0 +1,12 @@
+# Rust build output
+project-cube/target/
+
+# Node / SvelteKit
+node_modules/
+build/
+.svelte-kit/
+
+# Editor / OS
+.DS_Store
+.vscode/
+.idea/

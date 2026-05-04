@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>tower view</title>
+<style>
+  html, body { margin: 0; height: 100%; overflow: hidden; background: #f0f0f0;
+               font-family: sans-serif; }
+  #legend { position: absolute; top: 12px; right: 12px;
+            background: rgba(255,255,255,0.94); padding: 8px 12px;
+            border-radius: 6px; font-size: 12px; line-height: 1.5;
+            border: 1px solid #bbb; box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+            max-width: 280px; }
+  #legend.collapsed { padding: 4px 8px; }
+  #legend.collapsed > :not(#legend-toggle):not(#legend-stab-line) { display: none; }
+  #legend-toggle { cursor: pointer; user-select: none;
+                   font-size: 11px; color: #555;
+                   display: inline-block; }
+  #legend-toggle::before { content: "▾ "; }
+  #legend.collapsed #legend-toggle::before { content: "▸ "; }
+  #legend-stab-line { font-family: monospace; font-size: 11px;
+                      font-weight: bold; margin-left: 8px; color: #333; }
+  #legend h3 { margin: 6px 0 4px 0; font-size: 13px; }
+  #legend .row { white-space: nowrap; }
+  #legend .sw { display: inline-block; width: 12px; height: 12px;
+                vertical-align: middle; margin-right: 6px;
+                border: 1px solid #333; }
+  #legend .stab { font-family: monospace; font-size: 11px; }
+  #hint { position: absolute; bottom: 10px; left: 12px;
+          font-size: 11px; color: #555; }
+  #empty-msg { position: absolute; top: 50%; left: 50%;
+               transform: translate(-50%, -50%); color: #888;
+               text-align: center; }
+</style>
+</head>
+<body>
+<div id="legend" class="collapsed" style="display:none">
+  <span id="legend-toggle">legend</span>
+  <span id="legend-stab-line">—</span>
+  <h3>Tiles</h3>
+  <div id="legend-rows"></div>
+</div>
+<script>
+  document.addEventListener('click', (e) => {
+    if (e.target && e.target.id === 'legend-toggle') {
+      document.getElementById('legend').classList.toggle('collapsed');
+    }
+  });
+</script>
+<div id="hint">drag = rotate &middot; scroll = zoom &middot; right-drag = pan</div>
+<div id="empty-msg" style="display:none">No solution exists for this card pair.</div>
+<!-- Synchronous load of the named-examples manifest. Avoids fetch() — works
+     even if the page is opened over file:// or the server is sluggish. -->
+<script src="assets/examples_manifest.js"></script>
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+  }
+}
+</script>
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+// ---------- tile palette + names (must mirror render.rs) ------------------
+const TILE_TYPE_COLOR = ['#d62728', '#2ca02c', '#1f77b4', '#ff7f0e',
+                         '#9467bd', '#17becf'];
+const TILE_TYPE_NAME  = ['triple (1×1×3)', 'corner (L)', 'double (1×1×2)',
+                         'single (1×1×1)', 'hollow double', 'hollow single'];
+const TILE_TYPE_HOLLOW = [false, false, false, false, true, true];
+const FULL_CELL_MASS = 150.0;
+const HOLLOW_CELL_MASS = 50.0;
+function massForType(t) {
+  if (t === 0 || t === 1) return 3 * FULL_CELL_MASS;
+  if (t === 2) return 2 * FULL_CELL_MASS;
+  if (t === 3) return FULL_CELL_MASS;
+  if (t === 4) return 2 * HOLLOW_CELL_MASS;
+  if (t === 5) return HOLLOW_CELL_MASS;
+  return 0;
+}
+
+// ---------- decode placement data from URL --------------------------------
+// Two formats:
+//   ?data=BASE64 — decoded from a JSON object {tiles:[{type,cellsMask}], front, side}
+//   ?front=N&side=M — fetch solver_db.json and look up
+function decodeBase64Json(s) {
+  try {
+    const decoded = atob(s.replace(/-/g, '+').replace(/_/g, '/'));
+    return JSON.parse(decoded);
+  } catch (e) { return null; }
+}
+
+function cellsFromMask(mask) {
+  const cells = [];
+  for (let bit = 0; bit < 27; bit++) {
+    if ((mask >> bit) & 1) {
+      const x = Math.floor(bit / 9);
+      const rem = bit - x * 9;
+      const y = Math.floor(rem / 3);
+      const z = rem - y * 3;
+      cells.push([x, y, z]);
+    }
+  }
+  return cells;
+}
+
+async function getSpec() {
+  const url = new URL(window.location.href);
+  const dataParam = url.searchParams.get('data');
+  if (dataParam) return decodeBase64Json(dataParam);
+  // Named example — manifest is loaded synchronously by an earlier
+  // <script src="…examples_manifest.js"> tag, so no fetch needed here.
+  const exampleName = url.searchParams.get('example');
+  if (exampleName) {
+    const m = window.EXAMPLES_MANIFEST || {};
+    const e = m[exampleName];
+    if (!e) return null;
+    return {
+      front: e.front, side: e.side,
+      label: e.label,
+      stab: e.stab,
+      tiles: e.tiles.map(([type, cells]) => ({type, cells})),
+    };
+  }
+  // (front, side) lookup against the full solver DB.
+  const front = parseInt(url.searchParams.get('front') || '');
+  const side  = parseInt(url.searchParams.get('side')  || '');
+  if (Number.isFinite(front) && Number.isFinite(side)) {
+    const r = await fetch('assets/solver_db.json');
+    const arr = await r.json();
+    for (const entry of arr) {
+      if (entry[0] === front && entry[1] === side) {
+        return {
+          front: entry[0], side: entry[1],
+          strict: entry[2], marginal: entry[3],
+          tiles: entry[4].map(([type, cells]) => ({type, cells})),
+        };
+      }
+    }
+    return null;
+  }
+  return null;
+}
+
+// ---------- scene setup --------------------------------------------------
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0xf0f0f0);
+const camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 0.1, 100);
+camera.position.set(6.5, 5.5, 6.5);
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+document.body.appendChild(renderer.domElement);
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.target.set(1.5, 1.5, 1.5);
+controls.enableDamping = false;
+controls.update();
+scene.add(new THREE.AmbientLight(0xffffff, 0.55));
+const sun = new THREE.DirectionalLight(0xffffff, 0.9);
+sun.position.set(6, 10, 8); scene.add(sun);
+const fill = new THREE.DirectionalLight(0xffffff, 0.25);
+fill.position.set(-5, 4, -3); scene.add(fill);
+
+// Ground.
+const ground = new THREE.Mesh(
+  new THREE.PlaneGeometry(6, 6),
+  new THREE.MeshLambertMaterial({ color: 0xdddddd, side: THREE.DoubleSide })
+);
+ground.rotation.x = -Math.PI / 2;
+ground.position.set(1.5, 0, 1.5);
+scene.add(ground);
+const grid = new THREE.GridHelper(3, 3, 0x666666, 0x999999);
+grid.position.set(1.5, 0.002, 1.5);
+scene.add(grid);
+
+// ---------- cell rendering helpers ----------------------------------------
+const SCALE = 0.98, HALF = SCALE / 2, HOLE_R = 0.36, HOLE_SEGS = 48;
+const cubeGeo = new THREE.BoxGeometry(SCALE, SCALE, SCALE);
+const edgeGeo = new THREE.EdgesGeometry(cubeGeo);
+const edgeMat = new THREE.LineBasicMaterial({ color: 0x222222 });
+const panelShape = new THREE.Shape();
+panelShape.moveTo(-HALF, -HALF); panelShape.lineTo( HALF, -HALF);
+panelShape.lineTo( HALF,  HALF); panelShape.lineTo(-HALF,  HALF);
+panelShape.lineTo(-HALF, -HALF);
+const ph = new THREE.Path();
+ph.absarc(0, 0, HOLE_R, 0, Math.PI * 2, false);
+panelShape.holes.push(ph);
+const panelGeo = new THREE.ShapeGeometry(panelShape, HOLE_SEGS);
+
+function addSolidCell(x, y, z, mat) {
+  const cube = new THREE.Mesh(cubeGeo, mat);
+  // World Z is flipped from game y so that low-y cells render closer to the
+  // camera (which sits at +Z): y=0 → Z=2.5, y=2 → Z=0.5.
+  cube.position.set(x + 0.5, z + 0.5, 2.5 - y);
+  scene.add(cube);
+  const edges = new THREE.LineSegments(edgeGeo, edgeMat);
+  edges.position.copy(cube.position);
+  scene.add(edges);
+}
+function addHollowCell(x, y, z, color) {
+  const mat = new THREE.MeshLambertMaterial({
+    color: color, side: THREE.DoubleSide, transparent: true, opacity: 0.55,
+  });
+  const px = x + 0.5, py = z + 0.5, pz = 2.5 - y;
+  const faces = [
+    [0,            0,           0,    0,    HALF],
+    [Math.PI,      0,           0,    0,   -HALF],
+    [0,            Math.PI / 2, HALF, 0,    0   ],
+    [0,           -Math.PI / 2,-HALF, 0,    0   ],
+    [-Math.PI / 2, 0,           0,    HALF, 0   ],
+    [ Math.PI / 2, 0,           0,   -HALF, 0   ],
+  ];
+  for (const [rx, ry, ox, oy, oz] of faces) {
+    const panel = new THREE.Mesh(panelGeo, mat);
+    panel.rotation.x = rx; panel.rotation.y = ry;
+    panel.position.set(px + ox, py + oy, pz + oz);
+    scene.add(panel);
+  }
+}
+
+// ---------- silhouette projection + reference cards -----------------------
+function frontMaskFromCells(cells) {
+  // bit (a*3+z), a=x, z=z, regardless of y.
+  let m = 0;
+  for (const [x, y, z] of cells) m |= 1 << (x * 3 + z);
+  return m;
+}
+function sideMaskFromCells(cells) {
+  // bit (a*3+z), a=y, regardless of x.
+  let m = 0;
+  for (const [x, y, z] of cells) m |= 1 << (y * 3 + z);
+  return m;
+}
+function makeCardTexture(mask, mirrorColumns) {
+  const canvas = document.createElement('canvas');
+  const SIZE = 256;
+  canvas.width = canvas.height = SIZE;
+  const ctx = canvas.getContext('2d');
+  ctx.fillStyle = '#fffbf0'; ctx.fillRect(0, 0, SIZE, SIZE);
+  ctx.strokeStyle = '#5a4a30'; ctx.lineWidth = 5;
+  ctx.strokeRect(8, 8, SIZE - 16, SIZE - 16);
+  const cell = (SIZE - 32) / 3;
+  ctx.fillStyle = '#3a3a3a';
+  for (let z = 0; z < 3; z++) {
+    for (let a = 0; a < 3; a++) {
+      const bit = a * 3 + z;
+      if ((mask >> bit) & 1) {
+        const aDisp = mirrorColumns ? (2 - a) : a;
+        const x = 16 + aDisp * cell;
+        const y = 16 + (2 - z) * cell;
+        ctx.fillRect(x + 2, y + 2, cell - 4, cell - 4);
+      }
+    }
+  }
+  const tex = new THREE.CanvasTexture(canvas);
+  tex.needsUpdate = true;
+  return tex;
+}
+
+// ---------- main renderer -------------------------------------------------
+function render() { renderer.render(scene, camera); }
+controls.addEventListener('change', render);
+window.addEventListener('resize', () => {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  render();
+});
+
+// Initial paint of just the ground/grid, so the canvas isn't blank while
+// init() awaits the manifest fetch.
+render();
+
+async function init() {
+  const spec = await getSpec();
+  if (!spec) {
+    document.getElementById('empty-msg').style.display = 'block';
+    render();
+    return;
+  }
+  // Build legend.
+  const legend = document.getElementById('legend');
+  const rowsHost = document.getElementById('legend-rows');
+  rowsHost.innerHTML = '';
+  let solidCells = [];
+  for (let i = 0; i < spec.tiles.length; i++) {
+    const t = spec.tiles[i];
+    const color = TILE_TYPE_COLOR[t.type];
+    const row = document.createElement('div');
+    row.className = 'row';
+    const sw = document.createElement('span');
+    sw.className = 'sw';
+    sw.style.background = color;
+    row.appendChild(sw);
+    row.append(`${i}: ${TILE_TYPE_NAME[t.type]} (${massForType(t.type).toFixed(0)} g)`);
+    rowsHost.appendChild(row);
+
+    const cells = cellsFromMask(t.cells);
+    const isHollow = TILE_TYPE_HOLLOW[t.type];
+    const mat = isHollow ? null : new THREE.MeshLambertMaterial({ color });
+    for (const [x, y, z] of cells) {
+      if (isHollow) addHollowCell(x, y, z, color);
+      else { addSolidCell(x, y, z, mat); solidCells.push([x, y, z]); }
+    }
+  }
+  // Stability label — just one of STRICT / MARGINAL / UNSTABLE / showcase.
+  // Sourced from spec.stab when set; otherwise derived from strict/marginal
+  // counts (anything > 0 strict → STRICT, marginal-only → MARGINAL, else
+  // UNSTABLE).
+  let stabText;
+  if (typeof spec.stab === 'string') {
+    stabText = spec.stab;
+  } else if (typeof spec.strict === 'number' && typeof spec.marginal === 'number') {
+    stabText = spec.strict > 0 ? 'STRICT'
+             : spec.marginal > 0 ? 'MARGINAL'
+             : 'UNSTABLE';
+  } else {
+    stabText = '(unknown)';
+  }
+  const stabLine = document.getElementById('legend-stab-line');
+  if (stabLine) stabLine.textContent = stabText;
+  legend.style.display = 'block';
+
+  // Reference cards.
+  const front = (typeof spec.front === 'number') ? spec.front : frontMaskFromCells(solidCells);
+  const side  = (typeof spec.side  === 'number') ? spec.side  : sideMaskFromCells(solidCells);
+  if (front !== 0 || side !== 0) {
+    const cardGeo = new THREE.PlaneGeometry(3.0, 3.0);
+    const fMat = new THREE.MeshBasicMaterial({
+      map: makeCardTexture(front, false), side: THREE.DoubleSide,
+      transparent: true, opacity: 0.93,
+    });
+    const fCard = new THREE.Mesh(cardGeo, fMat);
+    fCard.position.set(1.5, 1.5, -0.6);
+    scene.add(fCard);
+    const sMat = new THREE.MeshBasicMaterial({
+      map: makeCardTexture(side, true), side: THREE.DoubleSide,
+      transparent: true, opacity: 0.93,
+    });
+    const sCard = new THREE.Mesh(cardGeo, sMat);
+    sCard.rotation.y = -Math.PI / 2;
+    sCard.position.set(-0.6, 1.5, 1.5);
+    scene.add(sCard);
+  }
+  render();
+}
+
+init().catch(err => {
+  console.error('tower_view init failed:', err);
+  const msg = document.getElementById('empty-msg');
+  msg.style.display = 'block';
+  msg.textContent = 'Render error: ' + (err && err.message ? err.message : err);
+  render();
+});
+</script>
+</body>
+</html>

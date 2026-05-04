@@ -1,0 +1,1 @@
+window.STATS = {"easiest_game":{"front_card":1,"front_rot":"180°","front_mask":249,"side_card":4,"side_rot":"180°","side_mask":473,"strict":689},"skip_required":{"front_card":1,"front_rot":"0°","front_mask":318,"side_card":8,"side_rot":"180°","side_mask":457,"strict":3}};

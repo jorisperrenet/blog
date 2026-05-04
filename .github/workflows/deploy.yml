@@ -1,0 +1,84 @@
+name: Deploy blog to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: project-cube
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+
+      - name: Build Rust binaries
+        working-directory: project-cube
+        run: cargo build --release
+
+      # The view-count enumerations take ~1 minute each. Cache them so we
+      # only re-run when the Rust source changes.
+      - name: Cache view counts
+        id: view-counts
+        uses: actions/cache@v4
+        with:
+          path: |
+            project-cube/view_counts.txt
+            project-cube/view_counts_all.txt
+          key: view-counts-${{ hashFiles('project-cube/src/**/*.rs', 'project-cube/Cargo.lock') }}
+
+      - name: Generate view counts
+        if: steps.view-counts.outputs.cache-hit != 'true'
+        working-directory: project-cube
+        run: |
+          PROJECT_CUBE_ALL_PIECES=0 PROJECT_CUBE_OUTPUT=view_counts.txt     ./target/release/project_cube
+          PROJECT_CUBE_ALL_PIECES=1 PROJECT_CUBE_OUTPUT=view_counts_all.txt ./target/release/project_cube
+
+      - name: Generate Project Cube assets
+        working-directory: project-cube
+        run: |
+          ./target/release/build_solver_db
+          ./target/release/generate_blog_examples
+
+      - name: Install npm dependencies
+        run: npm ci
+
+      - name: Build SvelteKit blog
+        env:
+          BASE_PATH: /blog
+        run: npm run build
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: build
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

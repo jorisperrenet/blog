@@ -1,0 +1,114 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">
+<title>pieces overview</title>
+<style>html,body{margin:0;height:100%;overflow:hidden;background:#f0f0f0;
+font-family:sans-serif}#legend{position:absolute;top:10px;left:14px;
+background:rgba(255,255,255,0.92);padding:6px 10px;border-radius:5px;
+font-size:11px;color:#444;border:1px solid #bbb;line-height:1.5}
+#legend strong{font-weight:600}.sw{display:inline-block;width:10px;
+height:10px;border:1px solid #333;vertical-align:middle;margin:0 4px 0 0}</style>
+</head><body>
+<div id="legend">
+  <strong>The 6 piece types</strong> (one set; the box has two — red and blue)<br>
+  <span class="sw" style="background:#d62728"></span>triple
+  <span class="sw" style="background:#2ca02c;margin-left:8px"></span>corner
+  <span class="sw" style="background:#1f77b4;margin-left:8px"></span>double
+  <span class="sw" style="background:#ff7f0e;margin-left:8px"></span>single<br>
+  <span class="sw" style="background:#9467bd"></span>hollow double
+  <span class="sw" style="background:#17becf;margin-left:8px"></span>hollow single
+</div>
+<script type="importmap">
+{"imports":{"three":"https://unpkg.com/three@0.160.0/build/three.module.js","three/addons/":"https://unpkg.com/three@0.160.0/examples/jsm/"}}
+</script>
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+const PIECES = [{label:"triple",color:"#d62728",hollow:false,cells:[[0.00,0.00,0.00],[0.00,1.00,0.00],[0.00,2.00,0.00]]},{label:"corner",color:"#2ca02c",hollow:false,cells:[[2.60,0.00,0.00],[3.60,0.00,0.00],[2.60,0.00,1.00]]},{label:"double",color:"#1f77b4",hollow:false,cells:[[5.20,0.00,0.00],[5.20,1.00,0.00]]},{label:"single",color:"#ff7f0e",hollow:false,cells:[[0.00,0.00,2.60]]},{label:"hollow double",color:"#9467bd",hollow:true,cells:[[2.60,0.00,2.60],[2.60,1.00,2.60]]},{label:"hollow single",color:"#17becf",hollow:true,cells:[[5.20,0.00,2.60]]}];
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0xf0f0f0);
+const camera = new THREE.PerspectiveCamera(38, window.innerWidth/window.innerHeight, 0.1, 100);
+camera.position.set(2.6 + 5.5, 4.2, 1.3 + 6.5);
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+document.body.appendChild(renderer.domElement);
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.target.set(2.6, 0.5, 1.3);
+controls.enableDamping = false;
+controls.update();
+scene.add(new THREE.AmbientLight(0xffffff, 0.6));
+const sun = new THREE.DirectionalLight(0xffffff, 0.85);
+sun.position.set(7, 10, 8);
+scene.add(sun);
+const fill = new THREE.DirectionalLight(0xffffff, 0.25);
+fill.position.set(-5, 4, -3);
+scene.add(fill);
+// Ground.
+const ground = new THREE.Mesh(
+  new THREE.PlaneGeometry(20, 14),
+  new THREE.MeshLambertMaterial({ color: 0xdddddd, side: THREE.DoubleSide })
+);
+ground.rotation.x = -Math.PI/2;
+ground.position.set(2.6, 0, 1.3);
+scene.add(ground);
+// Solid + hollow cell renderers.
+const SCALE = 0.96;
+const HALF = SCALE/2;
+const HOLE_R = 0.36;
+const cubeGeo = new THREE.BoxGeometry(SCALE, SCALE, SCALE);
+const edgeGeo = new THREE.EdgesGeometry(cubeGeo);
+const edgeMat = new THREE.LineBasicMaterial({ color: 0x222222 });
+const panelShape = new THREE.Shape();
+panelShape.moveTo(-HALF, -HALF); panelShape.lineTo( HALF, -HALF);
+panelShape.lineTo( HALF,  HALF); panelShape.lineTo(-HALF,  HALF);
+panelShape.lineTo(-HALF, -HALF);
+const hole = new THREE.Path();
+hole.absarc(0, 0, HOLE_R, 0, Math.PI*2, false);
+panelShape.holes.push(hole);
+const panelGeo = new THREE.ShapeGeometry(panelShape, 48);
+function addSolid(x, y, z, mat) {
+  const c = new THREE.Mesh(cubeGeo, mat);
+  c.position.set(x + 0.5, y + 0.5, z + 0.5);
+  scene.add(c);
+  const e = new THREE.LineSegments(edgeGeo, edgeMat);
+  e.position.copy(c.position);
+  scene.add(e);
+}
+function addHollow(x, y, z, color) {
+  const mat = new THREE.MeshLambertMaterial({
+    color: color, side: THREE.DoubleSide,
+    transparent: true, opacity: 0.55,
+  });
+  const px = x + 0.5, py = y + 0.5, pz = z + 0.5;
+  const faces = [
+    [0, 0, 0, 0, HALF],
+    [Math.PI, 0, 0, 0, -HALF],
+    [0, Math.PI/2, HALF, 0, 0],
+    [0, -Math.PI/2, -HALF, 0, 0],
+    [-Math.PI/2, 0, 0, HALF, 0],
+    [Math.PI/2, 0, 0, -HALF, 0],
+  ];
+  for (const [rx, ry, ox, oy, oz] of faces) {
+    const p = new THREE.Mesh(panelGeo, mat);
+    p.rotation.x = rx; p.rotation.y = ry;
+    p.position.set(px + ox, py + oy, pz + oz);
+    scene.add(p);
+  }
+}
+for (const piece of PIECES) {
+  const mat = new THREE.MeshLambertMaterial({ color: piece.color });
+  for (const [x, y, z] of piece.cells) {
+    if (piece.hollow) addHollow(x, y, z, piece.color);
+    else              addSolid(x, y, z, mat);
+  }
+}
+function render() { renderer.render(scene, camera); }
+controls.addEventListener('change', render);
+window.addEventListener('resize', () => {
+  camera.aspect = window.innerWidth/window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  render();
+});
+render();
+</script>
+</body></html>

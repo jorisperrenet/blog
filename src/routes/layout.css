@@ -1,0 +1,40 @@
+@import 'tailwindcss';
+
+@theme {
+  --color-fg: #1c1917;
+  --color-muted: #78716c;
+  --color-accent: #c2410c;
+  --color-accent-hover: #9a3412;
+  --color-bg: #faf7f0;
+  --color-card: #ffffff;
+  --color-border: #e7e2d7;
+  --font-serif: Georgia, "Times New Roman", serif;
+}
+
+@layer base {
+  html, body {
+    @apply m-0 p-0 bg-bg text-fg leading-[1.65];
+    font-family: var(--font-serif);
+    font-size: 15px;
+    -webkit-font-smoothing: antialiased;
+  }
+  main {
+    @apply max-w-[640px] mx-auto px-5;
+    margin-top: 56px;
+    margin-bottom: 96px;
+  }
+  h1 {
+    @apply text-[2.2em] leading-[1.15] font-bold tracking-tight m-0 mb-2;
+  }
+  p {
+    @apply my-3 text-muted;
+  }
+  a {
+    @apply text-accent transition-colors;
+    text-decoration-color: rgb(194 65 12 / 0.35);
+    text-underline-offset: 2px;
+  }
+  a:hover {
+    @apply text-accent-hover underline;
+  }
+}

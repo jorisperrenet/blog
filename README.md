@@ -43,11 +43,9 @@ graphs, manifests) into `static/project-cube/assets/`:
 cd project-cube
 cargo build --release
 
-# Generate view-count tables (~1 minute each).
-PROJECT_CUBE_ALL_PIECES=0 PROJECT_CUBE_OUTPUT=view_counts.txt     ./target/release/project_cube
-PROJECT_CUBE_ALL_PIECES=1 PROJECT_CUBE_OUTPUT=view_counts_all.txt ./target/release/project_cube
-
 # Build the solver database + every other generated asset.
+# (Reads view_counts.txt / view_counts_all.txt, which are committed to the
+# repo since regenerating them is the slow step.)
 ./target/release/build_solver_db
 ./target/release/generate_blog_examples
 ```
@@ -55,7 +53,15 @@ PROJECT_CUBE_ALL_PIECES=1 PROJECT_CUBE_OUTPUT=view_counts_all.txt ./target/relea
 Then back at the blog root, `npm run dev` (or `npm run build && npm run preview`)
 will serve the post at `/project-cube/`.
 
-Total wall time from a clean tree: roughly three minutes.
+If you need to regenerate the `view_counts*.txt` files (say, after changing
+something in `src/main.rs` that affects the enumeration output), run:
+
+```sh
+PROJECT_CUBE_ALL_PIECES=0 PROJECT_CUBE_OUTPUT=view_counts.txt     ./target/release/project_cube
+PROJECT_CUBE_ALL_PIECES=1 PROJECT_CUBE_OUTPUT=view_counts_all.txt ./target/release/project_cube
+```
+
+Each takes ~1 minute. Commit the result.
 
 Prerequisites: Rust (stable), Node 20+ and npm.
 

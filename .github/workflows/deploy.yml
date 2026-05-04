@@ -33,26 +33,11 @@ jobs:
 
       - name: Build Rust binaries
         working-directory: project-cube
-        run: cargo build --release
+        run: cargo build --release --bin build_solver_db --bin generate_blog_examples --bin graph_viz
 
-      # The view-count enumerations take ~1 minute each. Cache them so we
-      # only re-run when the Rust source changes.
-      - name: Cache view counts
-        id: view-counts
-        uses: actions/cache@v4
-        with:
-          path: |
-            project-cube/view_counts.txt
-            project-cube/view_counts_all.txt
-          key: view-counts-${{ hashFiles('project-cube/src/**/*.rs', 'project-cube/Cargo.lock') }}
-
-      - name: Generate view counts
-        if: steps.view-counts.outputs.cache-hit != 'true'
-        working-directory: project-cube
-        run: |
-          PROJECT_CUBE_ALL_PIECES=0 PROJECT_CUBE_OUTPUT=view_counts.txt     ./target/release/project_cube
-          PROJECT_CUBE_ALL_PIECES=1 PROJECT_CUBE_OUTPUT=view_counts_all.txt ./target/release/project_cube
-
+      # view_counts.txt and view_counts_all.txt are committed to the repo
+      # (they're slow to enumerate). build_solver_db and generate_blog_examples
+      # only read them.
       - name: Generate Project Cube assets
         working-directory: project-cube
         run: |

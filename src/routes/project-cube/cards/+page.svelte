@@ -2,9 +2,14 @@
   import { base } from '$app/paths';
   import Math from '$lib/Math.svelte';
   import Silhouette from '$lib/Silhouette.svelte';
+  import BlogHead from '$lib/BlogHead.svelte';
 </script>
 
-<svelte:head><title>The cards — Project Cube</title></svelte:head>
+<BlogHead
+  title="The cards — Project Cube"
+  description="The fifteen silhouette cards in the Project Cube deck and how they relate under the dihedral D₄ symmetry group."
+  path="/blog/project-cube/cards/"
+/>
 
 <h2>The cards</h2>
 

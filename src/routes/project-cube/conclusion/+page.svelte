@@ -1,9 +1,14 @@
 <script>
   import Silhouette from '$lib/Silhouette.svelte';
   import Math from '$lib/Math.svelte';
+  import BlogHead from '$lib/BlogHead.svelte';
 </script>
 
-<svelte:head><title>Conclusion — Project Cube</title></svelte:head>
+<BlogHead
+  title="Conclusion — Project Cube"
+  description="Conclusion of the Project Cube analysis: every printed card pair has a stable solution, the deck is a clique in the compatibility graph, and possible deck extensions are explored."
+  path="/blog/project-cube/conclusion/"
+/>
 
 <h2>So — well-designed or not?</h2>
 

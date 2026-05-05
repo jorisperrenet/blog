@@ -1,8 +1,13 @@
 <script>
   import { base } from '$app/paths';
+  import BlogHead from '$lib/BlogHead.svelte';
 </script>
 
-<svelte:head><title>The rules — Project Cube</title></svelte:head>
+<BlogHead
+  title="The rules — Project Cube"
+  description="How Project Cube is played: the wooden pieces, the silhouette cards, the dual-card holder, and the head-to-head race to build a 3-D figure matching both card silhouettes."
+  path="/blog/project-cube/rules/"
+/>
 
 <!-- Section 2 — The rules: how the game is played                   -->
 <!-- ============================================================== -->

@@ -1,6 +1,7 @@
 <script>
   import { base } from '$app/paths';
   import Math from '$lib/Math.svelte';
+  import BlogHead from '$lib/BlogHead.svelte';
 
   // Heavier expressions defined here so the markup stays readable. `String.raw`
   // keeps backslashes literal (so `\text` stays `\text`, not a tab character).
@@ -15,7 +16,11 @@
   const FORCE_BALANCE = tex`4 \cdot \tfrac{mg}{4} = mg`;
 </script>
 
-<svelte:head><title>Balance — Project Cube</title></svelte:head>
+<BlogHead
+  title="Balance — Project Cube"
+  description="When does a 3×3×3 wooden structure balance? Deciding stability with a linear program over per-block force and torque constraints in Project Cube."
+  path="/blog/project-cube/balance/"
+/>
 
 <h2>Balance: harder than it looks</h2>
 

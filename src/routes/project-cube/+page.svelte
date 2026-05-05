@@ -1,8 +1,14 @@
 <script>
   import { base } from '$app/paths';
+  import BlogHead from '$lib/BlogHead.svelte';
 </script>
 
-<svelte:head><title>Project Cube: well-designed or not?</title></svelte:head>
+<BlogHead
+  title="Project Cube: well-designed or not?"
+  description="An analysis of the Project Cube puzzle game by Alain Rivollet: rules, deck composition, when 3×3×3 structures balance, the compatibility graph, and a live silhouette pair solver."
+  path="/blog/project-cube/"
+  published="2026-05-04"
+/>
 
 <h1>Project Cube: well-designed or not?</h1>
 

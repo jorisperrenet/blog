@@ -4,9 +4,15 @@
   import Silhouette from '$lib/Silhouette.svelte';
   import Cliques from '$lib/Cliques.svelte';
   import { CLIQUES_DATA, CLIQUES_ALL_DATA } from '$lib/cliques.js';
+  import BlogHead from '$lib/BlogHead.svelte';
 </script>
 
-<svelte:head><title>All decks — Project Cube</title></svelte:head>
+<BlogHead
+  title="All decks — Project Cube"
+  description="Which decks for Project Cube admit a stable solution for every (front, side) card pair? An exploration of cliques in the compatibility graph of all 102 silhouettes."
+  path="/blog/project-cube/decks/"
+/>
+
 
 <h2>All decks: every possible silhouette</h2>
 

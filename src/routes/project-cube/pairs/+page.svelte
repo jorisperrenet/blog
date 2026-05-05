@@ -1,6 +1,7 @@
 <script>
   import { base } from '$app/paths';
   import Silhouette from '$lib/Silhouette.svelte';
+  import BlogHead from '$lib/BlogHead.svelte';
 
   let { data } = $props();
   const { stats, hardpairs } = data;
@@ -24,7 +25,11 @@
   }
 </script>
 
-<svelte:head><title>The deck — Project Cube</title></svelte:head>
+<BlogHead
+  title="The deck — Project Cube"
+  description="Computing every (front, side) silhouette pair Project Cube can produce, classifying their stability, and surfacing the hardest pairs to solve interactively."
+  path="/blog/project-cube/pairs/"
+/>
 
 <h2>The deck</h2>
 

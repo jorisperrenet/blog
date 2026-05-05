@@ -1,4 +1,6 @@
 <script>
+  import BlogHead from '$lib/BlogHead.svelte';
+
   // Add a new entry per post.
   const posts = [
     {
@@ -17,7 +19,11 @@
   }
 </script>
 
-<svelte:head><title>Joris Perrenet — blog</title></svelte:head>
+<BlogHead
+  title="Joris Perrenet — blog"
+  description="Notes and analyses by Joris Perrenet, including a deep-dive on the Project Cube puzzle game by Alain Rivollet."
+  path="/blog/"
+/>
 
 <main>
   <h1>Blog</h1>

@@ -1,6 +1,7 @@
 <script>
   import { onMount } from 'svelte';
   import { base } from '$app/paths';
+  import BlogHead from '$lib/BlogHead.svelte';
 
   // The solver_db.json file is the same one the legacy solver.html uses —
   // an array of [front_mask, side_mask, strict, marginal, placements]
@@ -77,7 +78,11 @@
   });
 </script>
 
-<svelte:head><title>Silhouette pair solver — Project Cube</title></svelte:head>
+<BlogHead
+  title="Silhouette pair solver — Project Cube"
+  description="Live solver for Project Cube: pick any front and side silhouette pair and see a stable 3-D wooden tower that satisfies both views."
+  path="/blog/project-cube/solver/"
+/>
 
 <h1>Silhouette pair solver</h1>
 

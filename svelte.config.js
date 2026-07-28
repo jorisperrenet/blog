@@ -14,6 +14,8 @@ const config = {
 					path === '/' ||
 					path === '/about' ||
 					path === '/about/' ||
+					path === '/projects' ||
+					path === '/projects/' ||
 					path === '/blog' ||
 					path === '/blog/'
 				) return;

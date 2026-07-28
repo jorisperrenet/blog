@@ -9,6 +9,7 @@
 <SiteShell
   active="blog"
   projectName="Blog"
+  currentProjectId="blog"
   projectHref={`${base}/`}
   sourceHref="https://github.com/jorisperrenet/blog"
   brandLogo

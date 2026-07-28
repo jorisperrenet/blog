@@ -27,7 +27,6 @@
 
 <main class="!mx-auto !mb-24 !mt-0 !w-full !max-w-5xl px-5 py-10 font-sans sm:px-8 sm:py-14">
   <header class="mb-9 max-w-2xl">
-    <p class="!mb-2 !mt-0 text-sm font-bold uppercase tracking-[0.18em] !text-blue-600 dark:!text-blue-400">Writing</p>
     <h1 class="!m-0 !text-4xl !font-bold !tracking-tight sm:!text-5xl">Blog</h1>
     <p class="!mt-4 !text-lg !leading-relaxed !text-gray-600 dark:!text-gray-300">
       Notes about mathematical software, algorithms, optimisation, and the projects I build.

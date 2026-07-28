@@ -65,6 +65,18 @@ Each takes ~1 minute. Commit the result.
 
 Prerequisites: Rust (stable), Node 20+ and npm.
 
+## Project Cube preview image
+
+`static/project-cube/assets/tower-preview.png` is a 1200×630 capture of the
+deterministic `easiest_game_pair` scene:
+
+```text
+/blog/project-cube/tower_view.html?example=easiest_game_pair
+```
+
+Wait for the WebGL canvas to finish rendering before taking a replacement
+capture.
+
 ## Deploy
 
 `.github/workflows/deploy.yml` runs the Rust pipeline + the SvelteKit

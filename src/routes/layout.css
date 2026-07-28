@@ -6,7 +6,6 @@
   html, body {
     @apply m-0 bg-[#f9fbff] p-0 text-gray-900 dark:bg-[#111827] dark:text-gray-100;
     font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
-    font-size: 15px;
     -webkit-font-smoothing: antialiased;
   }
 }

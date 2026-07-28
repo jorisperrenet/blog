@@ -17,7 +17,7 @@
   let solverActive = $derived(page.url.pathname.includes('/project-cube/solver'));
 </script>
 
-<nav aria-label="Project Cube chapters" class="sticky top-[40px] z-40 border-b border-gray-200 bg-[#f9fbff]/95 px-3 py-2 shadow-sm backdrop-blur-md dark:border-gray-800 dark:bg-[#111827]/95">
+<nav aria-label="Project Cube chapters" class="sticky top-[42px] z-40 border-b border-gray-200 bg-[#f9fbff]/95 px-3 py-2 shadow-sm backdrop-blur-md dark:border-gray-800 dark:bg-[#111827]/95">
   <div class="mx-auto flex max-w-4xl items-center text-xs tabular-nums sm:px-2">
     <details class="group relative mr-1 shrink-0">
       <summary class="flex cursor-pointer list-none items-center gap-1 whitespace-nowrap rounded-lg px-2 py-1.5 font-bold text-gray-900 transition-colors hover:bg-gray-100 hover:text-blue-600 dark:text-gray-100 dark:hover:bg-gray-800 dark:hover:text-blue-400 [&::-webkit-details-marker]:hidden">

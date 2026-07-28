@@ -1,85 +1,5 @@
 @import 'tailwindcss';
-
-@theme {
-  --color-fg: #1c1917;
-  --color-muted: #78716c;
-  --color-subtle: #a8a29e;
-  --color-accent: #c2410c;
-  --color-accent-hover: #9a3412;
-  --color-bg: #faf7f0;
-  --color-card: #ffffff;
-  --color-code-bg: #f5f0e6;
-  --color-border: #e7e2d7;
-  --color-border-strong: #d6cfc0;
-  --color-note-bg: #eef4f8;
-  --color-note-border: #6092b8;
-  --color-note-fg: #2c5d80;
-
-  --font-serif: Georgia, "Times New Roman", serif;
-  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
-  --font-mono: "JetBrains Mono", "Menlo", "Consolas", monospace;
-}
-
-@layer base {
-  html, body {
-    @apply m-0 p-0 bg-bg text-fg leading-[1.65];
-    font-family: var(--font-serif);
-    font-size: 15px;
-    -webkit-font-smoothing: antialiased;
-  }
-  main {
-    @apply max-w-[640px] mx-auto px-5;
-    margin-top: 56px;
-    margin-bottom: 48px;
-  }
-  h1 {
-    @apply text-[2.2em] leading-[1.15] font-bold tracking-tight m-0 mb-2;
-  }
-  h2 {
-    @apply text-[1.45em] font-semibold tracking-tight pb-2 border-b border-border;
-    margin-top: 2.6em;
-  }
-  h3 {
-    @apply text-[1.1em] font-semibold mt-7;
-  }
-  h4 {
-    @apply text-[1em] font-semibold mt-5;
-  }
-  p {
-    @apply my-3;
-  }
-  code {
-    font-family: var(--font-mono);
-    @apply text-[0.9em] bg-code-bg rounded-[3px];
-    padding: 0.1em 0.35em;
-  }
-  pre {
-    font-family: var(--font-mono);
-    @apply text-[0.9em] bg-code-bg rounded-md leading-snug overflow-x-auto;
-    padding: 14px 16px;
-  }
-  a {
-    @apply text-accent transition-colors;
-    text-decoration-color: rgb(194 65 12 / 0.35);
-    text-underline-offset: 2px;
-  }
-  a:hover {
-    @apply text-accent-hover underline;
-  }
-  ul, ol {
-    @apply pl-6;
-  }
-  ul li, ol li {
-    @apply my-1;
-  }
-  hr {
-    @apply my-8 border-0 border-t border-border;
-  }
-  abbr {
-    text-decoration-style: dotted;
-    text-decoration-color: var(--color-subtle);
-  }
-}
+@custom-variant dark (&:where(.dark, .dark *));
 
 /* The hero photograph at the top of the article. */
 .hero {
@@ -92,12 +12,12 @@ figure {
   @apply my-7;
 }
 figcaption {
-  @apply text-[0.86em] text-muted text-center mt-2 leading-relaxed;
+  @apply mt-2 text-center text-[0.86em] leading-relaxed text-gray-600 dark:text-gray-300;
 }
 
 /* iframes — used to embed three.js towers, vis-network graphs, etc. */
 iframe {
-  @apply w-full bg-card rounded-lg border border-border;
+  @apply w-full rounded-lg border border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800;
 }
 .iframe-tower      { height: 290px; }
 .iframe-cards      { height: 350px; }
@@ -108,23 +28,19 @@ iframe {
 
 /* Callouts — credit (legal/attribution), note (heads-up), stat-block (numbers). */
 .credit {
-  @apply text-[0.92em] text-muted my-5 px-4 py-3 rounded-md bg-card border border-border;
-  border-left: 3px solid var(--color-accent);
+  @apply my-5 rounded-md border border-l-[3px] border-gray-200 border-l-blue-600 bg-white px-4 py-3 text-[0.92em] text-gray-600 dark:border-gray-700 dark:border-l-blue-400 dark:bg-gray-800 dark:text-gray-300;
 }
 .note {
-  @apply my-4 px-4 py-3 rounded-md text-[0.95em] leading-relaxed;
-  background: var(--color-note-bg);
-  border-left: 3px solid var(--color-note-border);
+  @apply my-4 rounded-md border-l-[3px] border-blue-400 bg-blue-50 px-4 py-3 text-[0.95em] leading-relaxed dark:border-blue-500 dark:bg-blue-950/40;
 }
-.note strong { color: var(--color-note-fg); }
+.note strong { @apply text-blue-800 dark:text-blue-200; }
 .stat-block {
-  @apply my-4 px-4 py-3 rounded-md bg-code-bg text-[0.95em];
+  @apply my-4 rounded-md bg-gray-100 px-4 py-3 text-[0.95em] dark:bg-gray-800;
 }
 
 /* Inline "rule" callouts inside the TL;DR — accent-bordered code-bg blocks. */
 .rule-callout {
-  @apply my-3 px-4 py-2 rounded-md bg-code-bg;
-  border-left: 3px solid var(--color-accent);
+  @apply my-3 rounded-md border-l-[3px] border-blue-600 bg-gray-100 px-4 py-2 dark:border-blue-400 dark:bg-gray-800;
 }
 
 /* Two-figure horizontal pairs (e.g. before/after). */
@@ -138,14 +54,14 @@ iframe {
 
 /* The TL;DR <details> block. */
 details.tldr {
-  @apply my-4 rounded-lg border border-border bg-card overflow-hidden;
+  @apply my-4 overflow-hidden rounded-lg border border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800;
 }
 details.tldr > summary {
   @apply cursor-pointer px-4 py-3 text-[0.95em];
   list-style-position: inside;
 }
 details.tldr[open] > summary {
-  @apply bg-code-bg border-b border-border;
+  @apply border-b border-gray-200 bg-gray-100 dark:border-gray-700 dark:bg-gray-900;
 }
 details.tldr > :not(summary) {
   @apply px-4;
@@ -159,56 +75,54 @@ details.tldr > :last-child {
 
 /* Hardest-pairs solver widget. */
 .solver {
-  @apply my-5 rounded-lg border border-border bg-card px-5 py-4;
+  @apply my-5 rounded-lg border border-gray-200 bg-white px-5 py-4 dark:border-gray-700 dark:bg-gray-800;
 }
 .solver h3 { @apply mt-0; }
 .solver select {
-  font-family: var(--font-sans);
-  @apply text-[0.92em] px-3 py-1.5 rounded-md bg-bg border border-border-strong cursor-pointer;
+  @apply cursor-pointer rounded-md border border-gray-300 bg-[#f9fbff] px-3 py-1.5 text-[0.92em] dark:border-gray-600 dark:bg-gray-900;
   appearance: auto;
 }
-.solver select:hover { @apply border-accent; }
+.solver select:hover { @apply border-blue-600 dark:border-blue-400; }
 .solver .pair-display {
   @apply flex items-center gap-5 flex-wrap my-3;
 }
 .solver .pair-display .silh-large { @apply leading-none; }
-.solver .pair-display .pair-label { @apply text-[0.88em] text-muted block mb-1; }
+.solver .pair-display .pair-label { @apply mb-1 block text-[0.88em] text-gray-600 dark:text-gray-300; }
 .solver button {
-  font-family: var(--font-sans);
-  @apply text-[0.92em] px-4 py-1.5 rounded-md bg-bg border border-border-strong cursor-pointer transition-colors;
+  @apply cursor-pointer rounded-md border border-gray-300 bg-[#f9fbff] px-4 py-1.5 text-[0.92em] transition-colors dark:border-gray-600 dark:bg-gray-900;
   font-weight: 500;
 }
 .solver button:hover {
-  @apply bg-accent text-white border-accent;
+  @apply border-blue-600 bg-blue-600 text-white;
 }
 .solver .answer { @apply mt-3; }
 .solver .answer iframe { height: 320px; }
 
 /* Maximal-clique blocks (Section 7). */
 .clique-block {
-  @apply my-4 px-4 py-3 rounded-md bg-card border border-border;
+  @apply my-4 rounded-md border border-gray-200 bg-white px-4 py-3 dark:border-gray-700 dark:bg-gray-800;
 }
 .clique-block h4 { @apply m-0 mb-2 text-[1em] font-semibold flex items-baseline justify-between gap-3 flex-wrap; }
-.clique-block .min-stab { @apply text-[0.85em] text-muted font-normal; }
+.clique-block .min-stab { @apply text-[0.85em] font-normal text-gray-600 dark:text-gray-300; }
 .clique-cards { @apply flex flex-wrap gap-1.5 my-2; }
 .clique-card {
-  @apply inline-block align-top text-center rounded-sm bg-bg border border-border;
+  @apply inline-block rounded-sm border border-gray-200 bg-[#f9fbff] text-center align-top dark:border-gray-700 dark:bg-gray-900;
   padding: 6px 8px;
   min-width: 56px;
   font-size: 11px;
   line-height: 1.2;
 }
 .clique-card .gid {
-  @apply text-accent font-bold mt-0.5;
+  @apply mt-0.5 font-bold text-blue-600 dark:text-blue-400;
   font-size: 10px;
   min-height: 12px;
 }
 .clique-card .gid.empty {
-  @apply text-subtle;
+  @apply text-gray-400;
   font-weight: normal;
 }
 
 /* Subtle small-caps utility used in a couple of places. */
 .small {
-  @apply text-[0.92em] text-muted;
+  @apply text-[0.92em] text-gray-600 dark:text-gray-300;
 }

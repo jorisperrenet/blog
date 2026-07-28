@@ -51,7 +51,7 @@
 
 <h3>Dropping a 1×1×3 on top</h3>
 
-<figure class="float-right w-[260px] mt-[0.2em] mb-[0.6em] ml-[1.2em]">
+<figure class="mx-auto mb-[0.6em] mt-[0.2em] w-full sm:float-right sm:ml-[1.2em] sm:w-[260px]">
   <iframe src={`${base}/project-cube/tower_view.html?example=l_on_hollow_plus_triple`} loading="lazy" title="L + 1×1×3 — tips" class="h-[260px]"></iframe>
 </figure>
 
@@ -84,7 +84,7 @@
 
 <h3>An L wrapping a column</h3>
 
-<figure class="float-right w-[260px] mt-[0.2em] mb-[0.6em] ml-[1.2em]">
+<figure class="mx-auto mb-[0.6em] mt-[0.2em] w-full sm:float-right sm:ml-[1.2em] sm:w-[260px]">
   <iframe src={`${base}/project-cube/tower_view.html?example=l_hugging`} loading="lazy" title="L hugging vertical 1×1×2 (tips)" class="h-[260px]"></iframe>
 </figure>
 

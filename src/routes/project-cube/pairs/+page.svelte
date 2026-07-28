@@ -4,7 +4,8 @@
   import BlogHead from '$lib/BlogHead.svelte';
 
   let { data } = $props();
-  const { stats, hardpairs } = data;
+  let stats = $derived(data.stats);
+  let hardpairs = $derived(data.hardpairs);
 
   // Solver widget state: which pair is selected and whether the solution is shown.
   let pickIndex = $state(0);
@@ -111,7 +112,7 @@ front <Silhouette text="...|###|###" /> &nbsp;|&nbsp; side <Silhouette text="...
         <span class="pair-label">front</span><br>
         <span class="silh-large"><Silhouette mask={pick.front.mask} size={64} /></span>
       </div>
-      <div class="text-[1.5em] text-subtle">×</div>
+      <div class="text-[1.5em] text-gray-400">×</div>
       <div>
         <span class="pair-label">side</span><br>
         <span class="silh-large"><Silhouette mask={pick.side.mask} size={64} /></span>

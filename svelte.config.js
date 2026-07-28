@@ -8,6 +8,18 @@ const config = {
 	},
 	kit: {
 		adapter: adapter(),
+		prerender: {
+			handleHttpError: ({ path, message }) => {
+				if (
+					path === '/' ||
+					path === '/about' ||
+					path === '/about/' ||
+					path === '/blog' ||
+					path === '/blog/'
+				) return;
+				throw new Error(message);
+			}
+		},
 		paths: {
 			base: process.env.BASE_PATH ?? '',
 			// `paths.relative: true` (SvelteKit's default) was producing relative

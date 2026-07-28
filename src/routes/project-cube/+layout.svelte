@@ -17,38 +17,55 @@
   let solverActive = $derived(page.url.pathname.includes('/project-cube/solver'));
 </script>
 
-<header class="border-b border-border bg-bg/90 backdrop-blur-sm sticky top-0 z-10">
-  <nav class="max-w-[720px] mx-auto px-5 py-3 flex flex-wrap items-center gap-x-1.5 gap-y-2 text-[0.85em] tabular-nums">
-    <a href={`${base}/project-cube/`} class="text-[1.05em] font-semibold text-fg no-underline whitespace-nowrap mr-1.5">Project Cube</a>
+<nav aria-label="Project Cube chapters" class="sticky top-[40px] z-40 border-b border-gray-200 bg-[#f9fbff]/95 px-3 py-2 shadow-sm backdrop-blur-md dark:border-gray-800 dark:bg-[#111827]/95">
+  <div class="mx-auto flex max-w-4xl items-center text-xs tabular-nums sm:px-2">
+    <details class="group relative mr-1 shrink-0">
+      <summary class="flex cursor-pointer list-none items-center gap-1 whitespace-nowrap rounded-lg px-2 py-1.5 font-bold text-gray-900 transition-colors hover:bg-gray-100 hover:text-blue-600 dark:text-gray-100 dark:hover:bg-gray-800 dark:hover:text-blue-400 [&::-webkit-details-marker]:hidden">
+        <span>Project Cube</span>
+        <svg viewBox="0 0 20 20" class="h-3.5 w-3.5 transition-transform group-open:rotate-180" aria-hidden="true">
+          <path d="m5 7.5 5 5 5-5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+      </summary>
+      <div class="absolute left-0 top-full z-50 mt-2 w-72 rounded-xl border border-gray-200 bg-white p-1.5 text-left shadow-xl dark:border-gray-700 dark:bg-gray-800">
+        <a href={`${base}/`} class="block rounded-lg px-3 py-2 text-sm font-medium text-gray-700 no-underline transition-colors hover:bg-gray-100 hover:text-black dark:text-gray-200 dark:hover:bg-gray-700 dark:hover:text-white">All blog posts</a>
+        <a href={`${base}/project-cube/`} aria-current="page" class="block rounded-lg bg-blue-50 px-3 py-2 text-sm font-medium text-blue-700 no-underline dark:bg-blue-950/50 dark:text-blue-300">Project Cube — well-designed or not?</a>
+      </div>
+    </details>
+    <div class="flex min-w-0 items-center gap-1.5 overflow-x-auto">
     {#each sections as s}
       {@const active = s.slug === nav?.current?.slug}
       <a
         href={`${base}/project-cube/${s.slug}${s.slug ? '/' : ''}`}
         aria-label={`${s.num}. ${s.title}`}
-        class="group inline-flex items-center h-8 rounded-full border no-underline whitespace-nowrap overflow-hidden transition-all duration-200 {active ? 'bg-accent text-white border-accent pr-3 shadow-sm' : 'bg-card text-fg border-border-strong hover:border-accent hover:text-accent hover:pr-3 hover:shadow-sm'}"
+        aria-current={active ? 'page' : undefined}
+        title={`${s.num}. ${s.title}`}
+        class="inline-flex h-8 min-w-8 shrink-0 items-center justify-center rounded-full border px-2.5 font-semibold no-underline transition-colors {active ? 'border-blue-600 bg-blue-600 text-white' : 'border-gray-300 bg-white text-gray-700 hover:border-blue-500 hover:text-blue-600 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:hover:border-blue-400 dark:hover:text-blue-400'}"
       >
-        <span class="w-8 text-center font-semibold shrink-0">{s.num}</span>
-        <span class="overflow-hidden transition-[max-width] duration-200 {active ? 'max-w-[160px]' : 'max-w-0 group-hover:max-w-[160px]'}">{s.title}</span>
+        {s.num}
       </a>
     {/each}
     <a
       href={`${base}/project-cube/solver/`}
-      class="inline-flex items-center h-8 px-3.5 rounded-full border border-accent font-semibold no-underline whitespace-nowrap transition-colors {solverActive ? 'bg-accent text-white shadow-sm' : 'bg-card text-accent hover:bg-accent hover:text-white hover:shadow-sm'}"
+      aria-current={solverActive ? 'page' : undefined}
+      class="inline-flex h-8 shrink-0 items-center whitespace-nowrap rounded-full border px-3 font-semibold no-underline transition-colors {solverActive ? 'border-blue-600 bg-blue-600 text-white' : 'border-blue-500 bg-white text-blue-600 hover:bg-blue-600 hover:text-white dark:bg-gray-800 dark:text-blue-400 dark:hover:bg-blue-600 dark:hover:text-white'}"
     >Solver</a>
-  </nav>
-</header>
+    </div>
+  </div>
+</nav>
 
-<main>{@render children()}</main>
+<article class="project-cube-article prose prose-gray mx-auto mb-12 mt-10 max-w-[680px] px-5 prose-a:text-blue-600 prose-a:decoration-blue-300 hover:prose-a:text-blue-700 dark:prose-invert dark:prose-a:text-blue-400 dark:prose-a:decoration-blue-700 dark:hover:prose-a:text-blue-300">
+  {@render children()}
+</article>
 
 {#if nav && (nav.prev || nav.next)}
   <nav aria-label="Section navigation" class="max-w-[640px] mx-auto px-5 mt-12 mb-6 flex justify-between gap-4 text-[0.95em]">
     {#if nav.prev}
       <a
         href={`${base}/project-cube/${nav.prev.slug}${nav.prev.slug ? '/' : ''}`}
-        class="flex-1 min-w-0 px-4 py-3 rounded-lg border border-border bg-card no-underline hover:border-accent hover:bg-code-bg transition-colors"
+        class="min-w-0 flex-1 rounded-lg border border-gray-200 bg-white px-4 py-3 no-underline transition-colors hover:border-blue-500 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:border-blue-400 dark:hover:bg-gray-900"
       >
-        <span class="block text-[0.8em] uppercase tracking-wide text-muted">← Previous</span>
-        <span class="block text-fg font-semibold mt-0.5 truncate">{nav.prev.num}. {nav.prev.title}</span>
+        <span class="block text-[0.8em] uppercase tracking-wide text-gray-500 dark:text-gray-400">← Previous</span>
+        <span class="mt-0.5 block truncate font-semibold text-gray-900 dark:text-gray-100">{nav.prev.num}. {nav.prev.title}</span>
       </a>
     {:else}
       <span class="flex-1"></span>
@@ -56,10 +73,10 @@
     {#if nav.next}
       <a
         href={`${base}/project-cube/${nav.next.slug}${nav.next.slug ? '/' : ''}`}
-        class="flex-1 min-w-0 px-4 py-3 rounded-lg border border-border bg-card no-underline hover:border-accent hover:bg-code-bg transition-colors text-right"
+        class="min-w-0 flex-1 rounded-lg border border-gray-200 bg-white px-4 py-3 text-right no-underline transition-colors hover:border-blue-500 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:border-blue-400 dark:hover:bg-gray-900"
       >
-        <span class="block text-[0.8em] uppercase tracking-wide text-muted">Next →</span>
-        <span class="block text-fg font-semibold mt-0.5 truncate">{nav.next.num}. {nav.next.title}</span>
+        <span class="block text-[0.8em] uppercase tracking-wide text-gray-500 dark:text-gray-400">Next →</span>
+        <span class="mt-0.5 block truncate font-semibold text-gray-900 dark:text-gray-100">{nav.next.num}. {nav.next.title}</span>
       </a>
     {:else}
       <span class="flex-1"></span>

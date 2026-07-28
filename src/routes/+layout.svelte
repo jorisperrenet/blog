@@ -1,11 +1,19 @@
 <script>
   import './layout.css';
+  import { base } from '$app/paths';
+  import SiteShell from '$lib/site-kit/SiteShell.svelte';
 
   let { children } = $props();
 </script>
 
-{@render children()}
-
-<footer class="max-w-[640px] mx-auto px-5 pb-6 text-center text-[0.88em] text-muted">
-  © Joris Perrenet · <a href="https://github.com/jorisperrenet/blog" target="_blank" rel="noopener noreferrer">github.com/jorisperrenet/blog</a>
-</footer>
+<SiteShell
+  active="blog"
+  projectName="Blog"
+  projectHref={`${base}/`}
+  sourceHref="https://github.com/jorisperrenet/blog"
+  brandLogo
+  logoSrc={`${base}/personal-logo.svg`}
+  localNavigation
+>
+  {@render children()}
+</SiteShell>

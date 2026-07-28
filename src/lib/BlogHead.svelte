@@ -4,14 +4,14 @@
    *  - `title`: shown in browser tab and search results
    *  - `description`: 1-sentence summary for search results / link previews
    *  - `path`: site-relative URL incl. trailing slash, e.g. `/project-cube/rules/`
-   *  - `image`: optional absolute URL (defaults to author profile photo)
+   *  - `image`: optional absolute preview URL
    *  - `published`: ISO date — emits article:published_time + JSON-LD datePublished
    */
   let {
     title,
     description,
     path,
-    image = 'https://jorisperrenet.com/profile.jpg',
+    image = 'https://jorisperrenet.com/blog/project-cube/assets/project-cube-box.jpg',
     published = null,
   } = $props();
 
@@ -47,6 +47,8 @@
   <meta property="og:description" content={description} />
   <meta property="og:url" content={url} />
   <meta property="og:image" content={image} />
+  <meta property="og:image:width" content="640" />
+  <meta property="og:image:height" content="640" />
   <meta property="og:site_name" content="Joris Perrenet — blog" />
   {#if published}<meta property="article:published_time" content={published} />{/if}
   <meta name="twitter:card" content="summary_large_image" />

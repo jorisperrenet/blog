@@ -90,8 +90,8 @@
 
 <div class="flex gap-6 flex-wrap items-start my-6">
   <div>
-    <h3 class="text-[0.92em] text-muted m-0 mb-2 font-normal">Front silhouette</h3>
-    <div class="grid grid-cols-3 gap-1 p-2 bg-card rounded-md border border-border-strong">
+    <h3 class="m-0 mb-2 text-[0.92em] font-normal text-gray-600 dark:text-gray-300">Front silhouette</h3>
+    <div class="grid grid-cols-3 gap-1 rounded-md border border-gray-300 bg-white p-2 dark:border-gray-600 dark:bg-gray-800">
       {#each rows as z}
         {#each cols as a}
           {@const bit = bitOf(a, z)}
@@ -100,15 +100,15 @@
             onclick={() => toggleFront(bit)}
             aria-pressed={isOn(frontMask, bit)}
             aria-label={`Front cell column ${a + 1}, row ${z + 1}`}
-            class="w-14 h-14 rounded-sm cursor-pointer transition-colors {isOn(frontMask, bit) ? 'bg-fg border border-fg' : 'bg-code-bg border border-border-strong hover:bg-border'}"
+            class="h-14 w-14 cursor-pointer rounded-sm border transition-colors {isOn(frontMask, bit) ? 'border-gray-900 bg-gray-900 dark:border-gray-100 dark:bg-gray-100' : 'border-gray-300 bg-gray-100 hover:bg-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:hover:bg-gray-600'}"
           ></button>
         {/each}
       {/each}
     </div>
   </div>
   <div>
-    <h3 class="text-[0.92em] text-muted m-0 mb-2 font-normal">Side silhouette</h3>
-    <div class="grid grid-cols-3 gap-1 p-2 bg-card rounded-md border border-border-strong">
+    <h3 class="m-0 mb-2 text-[0.92em] font-normal text-gray-600 dark:text-gray-300">Side silhouette</h3>
+    <div class="grid grid-cols-3 gap-1 rounded-md border border-gray-300 bg-white p-2 dark:border-gray-600 dark:bg-gray-800">
       {#each rows as z}
         {#each cols as a}
           {@const bit = bitOf(a, z)}
@@ -117,7 +117,7 @@
             onclick={() => toggleSide(bit)}
             aria-pressed={isOn(sideMask, bit)}
             aria-label={`Side cell column ${a + 1}, row ${z + 1}`}
-            class="w-14 h-14 rounded-sm cursor-pointer transition-colors {isOn(sideMask, bit) ? 'bg-fg border border-fg' : 'bg-code-bg border border-border-strong hover:bg-border'}"
+            class="h-14 w-14 cursor-pointer rounded-sm border transition-colors {isOn(sideMask, bit) ? 'border-gray-900 bg-gray-900 dark:border-gray-100 dark:bg-gray-100' : 'border-gray-300 bg-gray-100 hover:bg-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:hover:bg-gray-600'}"
           ></button>
         {/each}
       {/each}
@@ -129,50 +129,50 @@
   <button
     type="button"
     onclick={onClear}
-    class="px-4 py-1.5 rounded-md border border-border-strong bg-card text-fg cursor-pointer hover:border-accent hover:text-accent transition-colors"
+    class="cursor-pointer rounded-md border border-gray-300 bg-white px-4 py-1.5 text-gray-900 transition-colors hover:border-blue-500 hover:text-blue-600 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 dark:hover:border-blue-400 dark:hover:text-blue-400"
   >Clear</button>
   <button
     type="button"
     onclick={onRandom}
     disabled={!allKeys?.length}
-    class="px-4 py-1.5 rounded-md border border-border-strong bg-card text-fg cursor-pointer hover:border-accent hover:text-accent transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+    class="cursor-pointer rounded-md border border-gray-300 bg-white px-4 py-1.5 text-gray-900 transition-colors hover:border-blue-500 hover:text-blue-600 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 dark:hover:border-blue-400 dark:hover:text-blue-400"
   >Random pair</button>
 </div>
 
 {#if loadError}
-  <div class="my-4 px-4 py-3 rounded-md text-[0.95em] bg-[#fff3cd] border-l-[3px] border-[#ddb44c]">
+  <div class="my-4 rounded-md border-l-[3px] border-amber-500 bg-amber-50 px-4 py-3 text-[0.95em] text-amber-950 dark:border-amber-400 dark:bg-amber-950/40 dark:text-amber-100">
     Could not load solver database: {loadError}
   </div>
 {:else if !dbIndex}
-  <div class="my-4 px-4 py-3 rounded-md bg-code-bg text-[0.95em] italic text-muted">
+  <div class="my-4 rounded-md bg-gray-100 px-4 py-3 text-[0.95em] italic text-gray-600 dark:bg-gray-800 dark:text-gray-300">
     Loading database…
   </div>
 {:else if frontMask === 0 && sideMask === 0}
-  <div class="my-4 px-4 py-3 rounded-md bg-code-bg text-[0.95em]">
+  <div class="my-4 rounded-md bg-gray-100 px-4 py-3 text-[0.95em] dark:bg-gray-800">
     Loaded {allKeys.length.toLocaleString()} solvable silhouette pairs. Click cells to begin, or hit "Random pair".
   </div>
 {:else if entry === 'impossible'}
-  <div class="my-4 px-4 py-3 rounded-md text-[0.95em] bg-[#fff3cd] border-l-[3px] border-[#ddb44c]">
+  <div class="my-4 rounded-md border-l-[3px] border-amber-500 bg-amber-50 px-4 py-3 text-[0.95em] text-amber-950 dark:border-amber-400 dark:bg-amber-950/40 dark:text-amber-100">
     <strong>Impossible.</strong> No arrangement of pieces matches both silhouettes.
   </div>
 {:else}
   {@const [, , strict, marginal] = entry}
-  <div class="my-4 px-4 py-3 rounded-md text-[0.95em] bg-[#e6f7e6] border-l-[3px] border-[#5cb85c]">
+  <div class="my-4 rounded-md border-l-[3px] border-green-500 bg-green-50 px-4 py-3 text-[0.95em] text-green-950 dark:border-green-400 dark:bg-green-950/40 dark:text-green-100">
     <strong>{strict + marginal}</strong> stable solution{strict + marginal === 1 ? '' : 's'}
     ({strict} strict, {marginal} marginal). The tower below is one of them.
   </div>
 {/if}
 
 {#if towerUrl}
-  <div class="w-full h-[480px] mt-3 rounded-lg border border-border-strong overflow-hidden bg-card">
+  <div class="mt-3 h-[480px] w-full overflow-hidden rounded-lg border border-gray-300 bg-white dark:border-gray-600 dark:bg-gray-800">
     <iframe src={towerUrl} title="tower" class="w-full h-full border-0 rounded-none"></iframe>
   </div>
 {:else if entry === 'impossible'}
-  <div class="w-full px-5 py-8 mt-3 rounded-lg border border-border-strong bg-card italic text-muted text-center">
+  <div class="mt-3 w-full rounded-lg border border-gray-300 bg-white px-5 py-8 text-center italic text-gray-600 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300">
     No tower exists for this pair.
   </div>
 {:else}
-  <div class="w-full px-5 py-8 mt-3 rounded-lg border border-border-strong bg-card italic text-muted text-center">
+  <div class="mt-3 w-full rounded-lg border border-gray-300 bg-white px-5 py-8 text-center italic text-gray-600 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300">
     Pick a silhouette pair to see a tower…
   </div>
 {/if}

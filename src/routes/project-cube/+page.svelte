@@ -12,7 +12,7 @@
 
 <h1>Project Cube: well-designed or not?</h1>
 
-<p class="text-[0.95em] text-muted -mt-2 mb-5">
+<p class="-mt-2 mb-5 text-[0.95em] text-gray-600 dark:text-gray-300">
   In a hurry? Skip to the <a href={`${base}/project-cube/solver/`}><strong>live silhouette pair solver</strong></a> and start drawing card pairs.
 </p>
 
@@ -22,7 +22,7 @@
 
 <p>Project Cube is a small wooden puzzle game by Alain Rivollet. Two players race to build a 3-D figure whose front silhouette matches one card and whose side silhouette matches another. The deck has fifteen cards.</p>
 
-<figure class="float-right w-[260px] mt-[0.2em] mb-[0.6em] ml-[1.2em]">
+<figure class="mx-auto mb-[0.6em] mt-[0.2em] w-full sm:float-right sm:ml-[1.2em] sm:w-[260px]">
   <iframe src={`${base}/project-cube/tower_view.html?example=easiest_game_pair`} loading="lazy" title="example complete tower with its two silhouettes" class="h-[260px]"></iframe>
   <figcaption class="text-[0.85em]">A complete tower for one card pair, with the two satisfied silhouettes floating behind it. Drag to rotate.</figcaption>
 </figure>
